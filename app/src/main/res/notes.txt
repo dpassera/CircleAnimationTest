@@ -1,0 +1,5 @@
+Next
+- 5 circles
+- Loop
+- Simulated heartbeat
+- BPM variable
