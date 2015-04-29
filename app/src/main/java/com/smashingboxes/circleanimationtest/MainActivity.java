@@ -7,7 +7,6 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
-import android.view.animation.Interpolator;
 import android.view.animation.ScaleAnimation;
 import android.widget.RelativeLayout;
 
@@ -23,7 +22,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-//        addTapListener();
+        addTapListener();
     }
 
     private void addTapListener() {
@@ -32,10 +31,10 @@ public class MainActivity extends Activity {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                scaleCircleX();
+                scaleCircle(findViewById(R.id.circle_p), 0f, 1f, 1000);
             }
         });
-    };
+    }
 
     private void scaleCircle(View circle, float startScale, float endScale, long dur) {
         ScaleAnimation scale = new ScaleAnimation(
@@ -59,42 +58,5 @@ public class MainActivity extends Activity {
         set.setInterpolator(new AccelerateDecelerateInterpolator());
 
         circle.startAnimation(set);
-    }
-
-    private void scaleCircleX() {
-        View circle = findViewById(R.id.circle_p);
-
-        AnimationSet animationSet = new AnimationSet(true);
-
-        ScaleAnimation scaleUp = new ScaleAnimation(
-                0f, 1,
-                0f, 1,
-                Animation.RELATIVE_TO_SELF, 0.5f,
-                Animation.RELATIVE_TO_SELF, 0.5f
-        );
-        scaleUp.setDuration(2000);
-
-        ScaleAnimation scaleDown = new ScaleAnimation(
-                1, 0,
-                1, 0,
-                Animation.RELATIVE_TO_SELF, 0.5f,
-                Animation.RELATIVE_TO_SELF, 0.5f
-        );
-        scaleDown.setDuration(2000);
-
-        AlphaAnimation alphaOut = new AlphaAnimation(1, 0);
-        alphaOut.setDuration(900);
-        alphaOut.setStartOffset(1000);
-
-        animationSet.addAnimation(scaleUp);
-        animationSet.addAnimation(alphaOut);
-        animationSet.setFillBefore(true);
-        animationSet.setFillAfter(true);
-        animationSet.setFillEnabled(true);
-//        animationSet.setRepeatCount(Animation.INFINITE);
-//        animationSet.setRepeatMode(Animation.RESTART);
-        animationSet.setInterpolator(new AccelerateDecelerateInterpolator());
-
-        circle.startAnimation(animationSet);
     }
 }
