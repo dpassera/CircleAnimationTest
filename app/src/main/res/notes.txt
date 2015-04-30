@@ -1,4 +1,2 @@
 Next
-- Loop
-- Simulated heartbeat
-- BPM variable
+- How to scale up then down?

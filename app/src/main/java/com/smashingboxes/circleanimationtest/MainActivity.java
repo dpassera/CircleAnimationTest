@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
@@ -18,6 +19,8 @@ import java.util.TimerTask;
 
 
 public class MainActivity extends Activity {
+
+    private static final String LOG_TAG = "MainActivity";
 
     private static final float MAX_PEAK = 10f;
     // one minute in ms
@@ -44,6 +47,14 @@ public class MainActivity extends Activity {
         initCircles();
         startLoop();
         addTapListener();
+
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
     private void initCircles() {
@@ -84,25 +95,37 @@ public class MainActivity extends Activity {
         });
     }
 
-    private void scaleCircle(View circle, float startScale, float endScale, long dur) {
-        ScaleAnimation scale = new ScaleAnimation(
+    private void scaleCircle(View circle, float startScale, float endScale, long dur, boolean doScaleDown) {
+        AnimationSet set = new AnimationSet(true);
+
+        ScaleAnimation scaleUp = new ScaleAnimation(
                 startScale, endScale,
                 startScale, endScale,
                 Animation.RELATIVE_TO_SELF, 0.5f,
                 Animation.RELATIVE_TO_SELF, 0.5f
         );
-        scale.setDuration(dur);
+        if(doScaleDown) {
+            scaleUp.setDuration((long)(dur*0.75));
+        } else {
+            scaleUp.setDuration(dur);
+        }
+        set.addAnimation(scaleUp);
 
-        AlphaAnimation alpha = new AlphaAnimation(1, 0);
-        alpha.setDuration(dur/2);
-        alpha.setStartOffset(dur/2);
+        if(doScaleDown) {
+            ScaleAnimation scaleDown = new ScaleAnimation(
+                    endScale, startScale,
+                    endScale, startScale,
+                    Animation.RELATIVE_TO_SELF, 0.5f,
+                    Animation.RELATIVE_TO_SELF, 0.5f
+            );
+            scaleDown.setDuration((long)(dur*0.25));
+            scaleDown.setStartOffset((long)(dur*0.75));
+            set.addAnimation(scaleDown);
+        }
 
-        AnimationSet set = new AnimationSet(true);
-        set.addAnimation(scale);
-//        set.addAnimation(alpha);
         set.setFillBefore(true);
-        set.setFillAfter(true);
         set.setFillEnabled(true);
+        set.setFillAfter(true);
         set.setInterpolator(new AccelerateDecelerateInterpolator());
 
         circle.setVisibility(View.VISIBLE);
@@ -119,8 +142,12 @@ public class MainActivity extends Activity {
             switch(msg.what) {
                 case BEAT:
                     float endScale = PEAKS[mBeatCount]/MAX_PEAK;
+                    boolean doScaleDown = false;
+                    if(mBeatCount == 2) {
+                        doScaleDown = true;
+                    }
                     scaleCircle(findViewById(mCircleIds.get(mBeatCount)),
-                            0, endScale, dur);
+                            0, endScale, dur, doScaleDown);
                     mBeatCount ++;
                     if(mBeatCount == PEAKS_PER_BEAT) {
                         mBeatCount = 0;

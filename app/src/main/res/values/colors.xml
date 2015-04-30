@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <!-- test -->
     <item name="white" type="color">#FFFFFFFF</item>
     <item name="red50" type="color">#7FFF4444</item>
+    <item name="black50" type="color">#80000000</item>
+
+    <item name="bkgd" type="color">#e86631</item>
+    <item name="t_value" type="color">#ffffff</item>
+    <item name="t_label" type="color">#ffffff</item>
+
 
 </resources>
