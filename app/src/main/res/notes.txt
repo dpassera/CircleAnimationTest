@@ -1,2 +1,5 @@
 Next
-- How to scale up then down?
+- Create and add view
+- Create drawable and add as background
+- Animate drawable
+- Remove view on animation complete

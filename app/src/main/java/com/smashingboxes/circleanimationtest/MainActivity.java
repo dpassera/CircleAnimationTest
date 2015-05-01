@@ -1,26 +1,34 @@
 package com.smashingboxes.circleanimationtest;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.ScaleAnimation;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * THIS CODE IS FOR QUICK EXPERIMENTATION!
+ * BEST PRACTICES AND CLARITY ARE OUT THE WINDOW!
+ * ANYTHING GOES!
+ */
 
 public class MainActivity extends Activity {
 
     private static final String LOG_TAG = "MainActivity";
+    private static final String ANIM_TYPE = "B";
 
     private static final float MAX_PEAK = 10f;
     // one minute in ms
@@ -35,6 +43,8 @@ public class MainActivity extends Activity {
     private Timer mTimer;
     private TimerTask mTimerTask;
 
+    private RelativeLayout mCirclesContainer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,10 +54,18 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        initCircles();
-        startLoop();
-        addTapListener();
 
+        setImmersiveMode();
+        if(ANIM_TYPE == "A") {
+            initCircles();
+        } else if(ANIM_TYPE == "B") {
+            mCirclesContainer = (RelativeLayout) findViewById(R.id.expand_circles_container);
+        }
+        initText();
+        startLoop(); // move to onCreate?
+    }
+
+    private void setImmersiveMode() {
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -69,6 +87,14 @@ public class MainActivity extends Activity {
         }
     }
 
+    private void initText() {
+        CircleTestApplication app = (CircleTestApplication) getApplication();
+        final Typeface tfRobotoBk = app.getCustomTypeface(app.TF_ROBOTO_BK);
+        TextView tBPM = (TextView) findViewById(R.id.t_bpm);
+
+        tBPM.setTypeface(tfRobotoBk);
+    }
+
     private void startLoop() {
         final Handler handler = new BeatHandler();
 
@@ -76,26 +102,20 @@ public class MainActivity extends Activity {
         mTimerTask = new TimerTask() {
             @Override
             public void run() {
-                handler.sendEmptyMessage(BeatHandler.BEAT);
+                switch (ANIM_TYPE) {
+                    case "A":
+                        handler.sendEmptyMessage(BeatHandler.A);
+                        break;
+                    case "B":
+                        handler.sendEmptyMessage(BeatHandler.B);
+                }
             }
         };
 
-        mTimer.scheduleAtFixedRate(mTimerTask, 0, MINUTE/BPM/PEAKS_PER_BEAT);
+        mTimer.scheduleAtFixedRate(mTimerTask, 0, MINUTE / BPM / PEAKS_PER_BEAT);
     }
 
-    private void addTapListener() {
-        RelativeLayout view = (RelativeLayout) findViewById(R.id.main_view);
-
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                scaleCircle(findViewById(R.id.circle_p), 0f, 1f, 1000);
-                //TODO: step through BPMs
-            }
-        });
-    }
-
-    private void scaleCircle(View circle, float startScale, float endScale, long dur, boolean doScaleDown) {
+    private void pulseCircle(View circle, float startScale, float endScale, long dur, boolean doScaleDown) {
         AnimationSet set = new AnimationSet(true);
 
         ScaleAnimation scaleUp = new ScaleAnimation(
@@ -132,22 +152,46 @@ public class MainActivity extends Activity {
         circle.startAnimation(set);
     }
 
+    private void expandCircle(int which) {
+        // create view
+        View view = new View(this);
+        view.setLayoutParams(new RelativeLayout.LayoutParams(
+           RelativeLayout.LayoutParams
+        ));
+
+        // add drawable to view background
+
+        if(which == 3) {
+            // fixed inner-radius
+        } else {
+            // fixed outer-radius
+        }
+    }
+
     public class BeatHandler extends Handler
     {
-        public static final int BEAT = 1;
+        public static final int A = 0;
+        public static final int B = 1;
         private static final long dur = 500;
 
         @Override
         public void handleMessage(Message msg) {
             switch(msg.what) {
-                case BEAT:
+                case A:
                     float endScale = PEAKS[mBeatCount]/MAX_PEAK;
                     boolean doScaleDown = false;
                     if(mBeatCount == 2) {
                         doScaleDown = true;
                     }
-                    scaleCircle(findViewById(mCircleIds.get(mBeatCount)),
+                    pulseCircle(findViewById(mCircleIds.get(mBeatCount)),
                             0, endScale, dur, doScaleDown);
+                    mBeatCount ++;
+                    if(mBeatCount == PEAKS_PER_BEAT) {
+                        mBeatCount = 0;
+                    }
+                    break;
+                case B:
+                    expandCircle(mBeatCount);
                     mBeatCount ++;
                     if(mBeatCount == PEAKS_PER_BEAT) {
                         mBeatCount = 0;
