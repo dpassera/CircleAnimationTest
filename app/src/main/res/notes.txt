@@ -1,5 +1,6 @@
 Next
-- Create and add view
-- Create drawable and add as background
 - Animate drawable
 - Remove view on animation complete
+
+Don't forget
+- Compile for 5.0 and use Z-level for rings and other select UI elements

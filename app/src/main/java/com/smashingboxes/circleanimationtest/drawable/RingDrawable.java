@@ -1,9 +1,12 @@
 package com.smashingboxes.circleanimationtest.drawable;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.Shape;
+
+import com.smashingboxes.circleanimationtest.R;
 
 /**
  * Created by dantepassera on 5/1/15.
@@ -12,20 +15,25 @@ public class RingDrawable extends ShapeDrawable {
 
     private static final String PROP_ARC_WIDTH = "stroke";
 
-    private static final float DEFAULT_INITIAL_IRAD = 40f;
-    private static final float DEFAULT_INITIAL_ARC_WIDTH = 0f;
+    private static final float DEFAULT_INITIAL_IRAD = 100f;
+    private static final float DEFAULT_INITIAL_STROKE_WIDTH = 0f;
     private static final boolean DEFAULT_IS_FIXED_IRAD = true;
 
-    public RingDrawable() {
-        this(DEFAULT_IS_FIXED_IRAD, DEFAULT_INITIAL_IRAD, DEFAULT_INITIAL_ARC_WIDTH);
+//    private Context mContext;
+
+    public RingDrawable(Context context) {
+        this(context, DEFAULT_IS_FIXED_IRAD, DEFAULT_INITIAL_IRAD, DEFAULT_INITIAL_STROKE_WIDTH);
     }
 
-    public RingDrawable(boolean fixedIRad, float iRad, float arcW) {
-        setShape(getRing(fixedIRad, iRad, arcW));
+    public RingDrawable(Context context, boolean fixedIRad, float iRad, float strokeW) {
+//        mContext = context;
+
+        setShape(getRing(fixedIRad, iRad, strokeW));
         getPaint().setStyle(Paint.Style.STROKE);
+        getPaint().setColor(context.getResources().getColor(R.color.red50));
     }
 
-    private Shape getRing(boolean fixedIRad, final float iRad, final float arcW) {
+    private Shape getRing(boolean fixedIRad, final float iRad, final float strokeW) {
         return new Shape() {
 
             @Override
@@ -35,12 +43,12 @@ public class RingDrawable extends ShapeDrawable {
         };
     }
 
-    public void setArcWidth(float arcW) {
-        getPaint().setStrokeWidth(arcW);
+    public void setStrokeWidth(float strokeW) {
+        getPaint().setStrokeWidth(strokeW);
         invalidateSelf();
     }
 
-    public float getArcWidth() {
+    public float getStrokeWidth() {
         return getPaint().getStrokeWidth();
     }
 

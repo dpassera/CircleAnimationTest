@@ -15,6 +15,8 @@ import android.view.animation.ScaleAnimation;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.smashingboxes.circleanimationtest.drawable.RingDrawable;
+
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -57,12 +59,13 @@ public class MainActivity extends Activity {
 
         setImmersiveMode();
         if(ANIM_TYPE == "A") {
-            initCircles();
+//            initCircles();
         } else if(ANIM_TYPE == "B") {
             mCirclesContainer = (RelativeLayout) findViewById(R.id.expand_circles_container);
         }
         initText();
-        startLoop(); // move to onCreate?
+//        startLoop(); // move to onCreate?
+        expandCircle(3);
     }
 
     private void setImmersiveMode() {
@@ -75,7 +78,7 @@ public class MainActivity extends Activity {
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
-    private void initCircles() {
+    /*private void initCircles() {
         mCircleIds.add(R.id.circle_p);
         mCircleIds.add(R.id.circle_q);
         mCircleIds.add(R.id.circle_r);
@@ -85,7 +88,7 @@ public class MainActivity extends Activity {
         for(int i=0; i< mCircleIds.size(); i++) {
             findViewById(mCircleIds.get(i)).setVisibility(View.INVISIBLE);
         }
-    }
+    }*/
 
     private void initText() {
         CircleTestApplication app = (CircleTestApplication) getApplication();
@@ -156,10 +159,17 @@ public class MainActivity extends Activity {
         // create view
         View view = new View(this);
         view.setLayoutParams(new RelativeLayout.LayoutParams(
-           RelativeLayout.LayoutParams
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT
         ));
 
+        mCirclesContainer.addView(view);
+
         // add drawable to view background
+        view.setBackground(new RingDrawable(this));
+
+        RingDrawable rd = (RingDrawable)view.getBackground();
+        rd.setStrokeWidth(120f);
 
         if(which == 3) {
             // fixed inner-radius
