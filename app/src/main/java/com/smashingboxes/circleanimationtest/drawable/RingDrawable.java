@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.Shape;
+import android.util.Log;
 
 import com.smashingboxes.circleanimationtest.R;
 
@@ -13,27 +14,30 @@ import com.smashingboxes.circleanimationtest.R;
  */
 public class RingDrawable extends ShapeDrawable {
 
-    private static final String PROP_STROKE_WIDTH = "stroke";
+    public static final String PROP_STROKE_WIDTH = "stroke";
+
+    private static final String LOG_TAG = "RingDrawable";
 
     private static final float DEFAULT_INITIAL_IRAD = 180f;
     private static final float DEFAULT_INITIAL_STROKE_WIDTH = 0f;
+    private static final float DEFAULT_CY = 690f;
     private static final boolean DEFAULT_IS_FIXED_IRAD = true;
 
     private float mIRad;
 
 //    private Context mContext;
 
-    public RingDrawable(Context context) {
-        this(context, DEFAULT_IS_FIXED_IRAD, DEFAULT_INITIAL_IRAD, DEFAULT_INITIAL_STROKE_WIDTH);
+    public RingDrawable(Context context, int color) {
+        this(context, DEFAULT_IS_FIXED_IRAD, DEFAULT_INITIAL_IRAD, DEFAULT_INITIAL_STROKE_WIDTH, color);
     }
 
-    public RingDrawable(Context context, boolean fixedIRad, float iRad, float strokeW) {
+    public RingDrawable(Context context, boolean fixedIRad, float iRad, float strokeW, int color) {
 //        mContext = context;
         mIRad = iRad;
 
         setShape(getRing(fixedIRad, strokeW));
         getPaint().setStyle(Paint.Style.STROKE);
-        getPaint().setColor(context.getResources().getColor(R.color.red50));
+        getPaint().setColor(color);
     }
 
     private Shape getRing(boolean fixedIRad, final float strokeW) {
@@ -41,18 +45,19 @@ public class RingDrawable extends ShapeDrawable {
 
             @Override
             public void draw(Canvas canvas, Paint paint) {
-               canvas.drawCircle(canvas.getWidth()/2, canvas.getHeight()/2, mIRad, paint);
+               canvas.drawCircle(canvas.getWidth()/2, DEFAULT_CY, mIRad, paint);
             }
         };
     }
 
-    public void setStrokeWidth(float strokeW) {
+    public void setStroke(float strokeW) {
+//        Log.d(LOG_TAG, "# setStroke");
         getPaint().setStrokeWidth(strokeW);
-        mIRad += strokeW/2;
+        mIRad = DEFAULT_INITIAL_IRAD + strokeW/2;
         invalidateSelf();
     }
 
-    public float getStrokeWidth() {
+    public float getStroke() {
         return getPaint().getStrokeWidth();
     }
 

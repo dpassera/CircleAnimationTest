@@ -1,12 +1,16 @@
 package com.smashingboxes.circleanimationtest;
 
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.app.Activity;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.ScaleAnimation;
@@ -38,8 +42,9 @@ public class MainActivity extends Activity {
     private int BPM = 60; // 60 | 100 | 200
     private ArrayList<Integer> mCircleIds = new ArrayList<>();
     private int mBeatCount = 0;
+    private int mRWhich = 1;
     // dummy peak amplitudes
-    private float[] PEAKS = {0.125f*MAX_PEAK, -0.125f*MAX_PEAK, 1*MAX_PEAK, -0.25f*MAX_PEAK, 0.1875f*MAX_PEAK};
+    private final float[] PEAKS = {0.125f*MAX_PEAK, -0.125f*MAX_PEAK, 1*MAX_PEAK, -0.25f*MAX_PEAK, 0.1875f*MAX_PEAK};
     private Timer mTimer;
     private TimerTask mTimerTask;
 
@@ -60,10 +65,14 @@ public class MainActivity extends Activity {
 //            initCircles();
         } else if(ANIM_TYPE == "B") {
             mCirclesContainer = (RelativeLayout) findViewById(R.id.expand_circles_container);
+            AlphaAnimation aAnim = new AlphaAnimation(1f, 0.3f);
+            aAnim.setDuration(100);
+            aAnim.setFillAfter(true);
+            aAnim.start();
         }
         initText();
-//        startLoop(); // move to onCreate?
-        expandCircle(3);
+        startLoop(); // move to onCreate?
+//        expandCircle(3);
     }
 
     private void setImmersiveMode() {
@@ -164,13 +173,30 @@ public class MainActivity extends Activity {
         mCirclesContainer.addView(view);
 
         // add drawable to view background
-        view.setBackground(new RingDrawable(this));
+        int color = getResources().getColor(R.color.red50);
+        switch(which) {
+            case 3:
+                if(mRWhich == 1) {
+                    color = getResources().getColor(R.color.r_1);
+                    mRWhich = 2;
+                } else {
+                    color = getResources().getColor(R.color.r_2);
+                    mRWhich = 1;
+                }
+                break;
+        }
+        view.setBackground(new RingDrawable(this, color));
 
         RingDrawable rd = (RingDrawable)view.getBackground();
-        rd.setStrokeWidth(120f);
+        rd.setStroke(0f);
 
+        // animate
         if(which == 3) {
-            // fixed inner-radius
+            // R | fixed inner-radius
+            PropertyValuesHolder holder1 = PropertyValuesHolder.ofFloat(RingDrawable.PROP_STROKE_WIDTH, 1f, 480f);
+            ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(rd, holder1);
+            animator.setDuration(1000);
+            animator.start();
         } else {
             // fixed outer-radius
         }
