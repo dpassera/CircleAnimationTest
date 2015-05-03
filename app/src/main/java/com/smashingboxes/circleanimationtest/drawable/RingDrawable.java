@@ -1,15 +1,17 @@
 package com.smashingboxes.circleanimationtest.drawable;
 
+import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.Shape;
 import android.util.Log;
+import android.view.View;
+import android.widget.RelativeLayout;
 
-import com.smashingboxes.circleanimationtest.R;
+import java.util.ArrayList;
 
 /**
  * Created by dantepassera on 5/1/15.
@@ -26,16 +28,17 @@ public class RingDrawable extends ShapeDrawable {
     private static final boolean DEFAULT_IS_FIXED_IRAD = true;
 
     private float mIRad;
+    private int mId;
+    private ArrayList<View> mRViewArr = new ArrayList<View>();
 
-//    private Context mContext;
-
-    public RingDrawable(Context context, int color) {
-        this(context, DEFAULT_IS_FIXED_IRAD, DEFAULT_INITIAL_IRAD, DEFAULT_INITIAL_STROKE_WIDTH, color);
+    public RingDrawable(int id, int color, ArrayList<View> rViewArr) {
+        this(id, DEFAULT_IS_FIXED_IRAD, DEFAULT_INITIAL_IRAD, DEFAULT_INITIAL_STROKE_WIDTH, color, rViewArr);
     }
 
-    public RingDrawable(Context context, boolean fixedIRad, float iRad, float strokeW, int color) {
-//        mContext = context;
+    public RingDrawable(int id, boolean fixedIRad, float iRad, float strokeW, int color, ArrayList<View> rViewArr) {
+        mId = id;
         mIRad = iRad;
+        mRViewArr = rViewArr;
 
         setShape(getRing(fixedIRad, strokeW));
         getPaint().setStyle(Paint.Style.STROKE);
@@ -46,6 +49,7 @@ public class RingDrawable extends ShapeDrawable {
         PropertyValuesHolder holder1 = PropertyValuesHolder.ofFloat(PROP_STROKE_WIDTH, 1f, width);
         ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(this, holder1);
         animator.setDuration(dur);
+        animator.addListener(mAnimatorListener);
         animator.start();
     }
 
@@ -58,6 +62,7 @@ public class RingDrawable extends ShapeDrawable {
 
             @Override
             public void draw(Canvas canvas, Paint paint) {
+//                Log.d(LOG_TAG, "! draw : "+mId);
                canvas.drawCircle(canvas.getWidth()/2, DEFAULT_CY, mIRad, paint);
             }
         };
@@ -72,5 +77,31 @@ public class RingDrawable extends ShapeDrawable {
     public float getStroke() {
         return getPaint().getStrokeWidth();
     }
+
+    private Animator.AnimatorListener mAnimatorListener = new Animator.AnimatorListener() {
+        @Override
+        public void onAnimationStart(Animator animation) {
+
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
+//            Log.d(LOG_TAG, "! onAnimationEnd : "+mId);
+            if(mId > 0) {
+                View view = mRViewArr.get(mId-1);
+                ((RelativeLayout)view.getParent()).removeView(view);
+            }
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animation) {
+
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animation) {
+
+        }
+    };
 
 }

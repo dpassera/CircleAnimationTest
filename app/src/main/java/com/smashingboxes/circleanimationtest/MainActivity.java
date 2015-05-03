@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.RelativeLayout;
@@ -27,19 +28,19 @@ public class MainActivity extends Activity {
     private static final String LOG_TAG = "MainActivity";
     private static final int MSG_BEAT = 0;
 
-    private static final float MAX_PEAK = 10f;
     // one minute in ms
     private static final int MINUTE = 60000;
     private static final int PEAKS_PER_BEAT = 5;
+    private static final int BPM = 60; // 60 | 100 | 200
 
-    private int BPM = 60; // 60 | 100 | 200
-    private ArrayList<Integer> mCircleIds = new ArrayList<>();
     private int mBeatCount = 0;
     private int mRWhich = 1;
     private Timer mTimer;
     private TimerTask mTimerTask;
 
     private RelativeLayout mCirclesContainer;
+
+    private ArrayList<View> mRViewArr = new ArrayList<View>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,40 +99,45 @@ public class MainActivity extends Activity {
     }
 
     private void animateBeat(int which) {
+        Log.d(LOG_TAG, "# animatBeat : "+mRViewArr.size());
         // create view
-        View view = new View(this);
-        view.setLayoutParams(new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT
-        ));
-
-        mCirclesContainer.addView(view);
-
-        // add drawable to view background
-        int color = getResources().getColor(R.color.red50);
-        switch(which) {
-            case 3:
-                if(mRWhich == 1) {
-                    color = getResources().getColor(R.color.r_1);
-                    mRWhich = 2;
-                } else {
-                    color = getResources().getColor(R.color.r_2);
-                    mRWhich = 1;
-                }
-                break;
-        }
-        view.setBackground(new RingDrawable(this, color));
-
-        RingDrawable rd = (RingDrawable)view.getBackground();
-        rd.setStroke(0f);
-
-        // animate
+        //* temp throttle
         if(which == 3) {
-            // R | fixed inner-radius + variable stroke
-            rd.animateStroke(480f, 1000);
-        } else {
-            // variable inner-radius + fixed stroke
-        }
+            View view = new View(this);
+            view.setLayoutParams(new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT
+            ));
+
+            mCirclesContainer.addView(view);
+            mRViewArr.add(view);
+
+            // add drawable to view background
+            int color = getResources().getColor(R.color.red50);
+            switch (which) {
+                case 3:
+                    if (mRWhich == 1) {
+                        color = getResources().getColor(R.color.r_1);
+                        mRWhich = 2;
+                    } else {
+                        color = getResources().getColor(R.color.r_2);
+                        mRWhich = 1;
+                    }
+                    break;
+            }
+            view.setBackground(new RingDrawable(mRViewArr.size() - 1, color, mRViewArr));
+
+            RingDrawable rd = (RingDrawable) view.getBackground();
+            rd.setStroke(0f);
+
+            // animate
+            if(which == 3) {
+                // R | fixed inner-radius + variable stroke
+                rd.animateStroke(480f, 1000);
+            } else {
+                // variable inner-radius + fixed stroke
+            }
+        } // * end temp throttle
     }
 
     public class BeatHandler extends Handler
