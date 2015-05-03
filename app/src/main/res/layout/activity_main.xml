@@ -15,50 +15,6 @@
 
     </FrameLayout>
 
-    <!--RelativeLayout
-        android:id="@+id/circles_optionA"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true">
-
-        <ImageView
-            android:id="@+id/circle_p"
-            android:src="@drawable/circle"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            android:layout_centerInParent="true"/>
-
-        <ImageView
-            android:id="@+id/circle_q"
-            android:src="@drawable/circle"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            android:layout_centerInParent="true"/>
-
-        <ImageView
-            android:id="@+id/circle_r"
-            android:src="@drawable/circle"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            android:layout_centerInParent="true"/>
-
-        <ImageView
-            android:id="@+id/circle_s"
-            android:src="@drawable/circle"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            android:layout_centerInParent="true"/>
-
-        <ImageView
-            android:id="@+id/circle_t"
-            android:src="@drawable/circle"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            android:layout_centerInParent="true"/>
-
-    </RelativeLayout-->
-
     <RelativeLayout
         android:id="@+id/expand_circles_container"
         android:layout_width="fill_parent"

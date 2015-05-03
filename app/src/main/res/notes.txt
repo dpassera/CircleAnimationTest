@@ -1,9 +1,8 @@
 Next
-x Position circles container
-x Animate drawable
-x Add drawables on R beat
 - Remove drawable[n] when drawable[n+1] has completed animation
-x Start screwing around with color/opacity
+    - Add R views to array
+    - Pass reference to R array to each R
+    - Move animation into RingDrawable
 
 Don't forget
 - Compile for 5.0 and use Z-level for rings and other select UI elements

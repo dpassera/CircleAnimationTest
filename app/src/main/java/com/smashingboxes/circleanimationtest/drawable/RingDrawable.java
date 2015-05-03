@@ -1,5 +1,7 @@
 package com.smashingboxes.circleanimationtest.drawable;
 
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -40,6 +42,17 @@ public class RingDrawable extends ShapeDrawable {
         getPaint().setColor(color);
     }
 
+    public void animateStroke(float width, long dur) {
+        PropertyValuesHolder holder1 = PropertyValuesHolder.ofFloat(PROP_STROKE_WIDTH, 1f, width);
+        ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(this, holder1);
+        animator.setDuration(dur);
+        animator.start();
+    }
+
+    public void animateRadius(float radius, long dur) {
+
+    }
+
     private Shape getRing(boolean fixedIRad, final float strokeW) {
         return new Shape() {
 
@@ -51,7 +64,6 @@ public class RingDrawable extends ShapeDrawable {
     }
 
     public void setStroke(float strokeW) {
-//        Log.d(LOG_TAG, "# setStroke");
         getPaint().setStrokeWidth(strokeW);
         mIRad = DEFAULT_INITIAL_IRAD + strokeW/2;
         invalidateSelf();

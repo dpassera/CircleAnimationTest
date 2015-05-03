@@ -1,19 +1,12 @@
 package com.smashingboxes.circleanimationtest;
 
-import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
 import android.app.Activity;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.ScaleAnimation;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -32,7 +25,7 @@ import java.util.TimerTask;
 public class MainActivity extends Activity {
 
     private static final String LOG_TAG = "MainActivity";
-    private static final String ANIM_TYPE = "B";
+    private static final int MSG_BEAT = 0;
 
     private static final float MAX_PEAK = 10f;
     // one minute in ms
@@ -43,8 +36,6 @@ public class MainActivity extends Activity {
     private ArrayList<Integer> mCircleIds = new ArrayList<>();
     private int mBeatCount = 0;
     private int mRWhich = 1;
-    // dummy peak amplitudes
-    private final float[] PEAKS = {0.125f*MAX_PEAK, -0.125f*MAX_PEAK, 1*MAX_PEAK, -0.25f*MAX_PEAK, 0.1875f*MAX_PEAK};
     private Timer mTimer;
     private TimerTask mTimerTask;
 
@@ -61,18 +52,9 @@ public class MainActivity extends Activity {
         super.onResume();
 
         setImmersiveMode();
-        if(ANIM_TYPE == "A") {
-//            initCircles();
-        } else if(ANIM_TYPE == "B") {
-            mCirclesContainer = (RelativeLayout) findViewById(R.id.expand_circles_container);
-            AlphaAnimation aAnim = new AlphaAnimation(1f, 0.3f);
-            aAnim.setDuration(100);
-            aAnim.setFillAfter(true);
-            aAnim.start();
-        }
+        initCirclesContainer();
         initText();
         startLoop(); // move to onCreate?
-//        expandCircle(3);
     }
 
     private void setImmersiveMode() {
@@ -85,17 +67,13 @@ public class MainActivity extends Activity {
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
-    /*private void initCircles() {
-        mCircleIds.add(R.id.circle_p);
-        mCircleIds.add(R.id.circle_q);
-        mCircleIds.add(R.id.circle_r);
-        mCircleIds.add(R.id.circle_s);
-        mCircleIds.add(R.id.circle_t);
-
-        for(int i=0; i< mCircleIds.size(); i++) {
-            findViewById(mCircleIds.get(i)).setVisibility(View.INVISIBLE);
-        }
-    }*/
+    private void initCirclesContainer() {
+        mCirclesContainer = (RelativeLayout) findViewById(R.id.expand_circles_container);
+        AlphaAnimation aAnim = new AlphaAnimation(1f, 0.3f);
+        aAnim.setDuration(100);
+        aAnim.setFillAfter(true);
+        aAnim.start();
+    }
 
     private void initText() {
         CircleTestApplication app = (CircleTestApplication) getApplication();
@@ -112,57 +90,14 @@ public class MainActivity extends Activity {
         mTimerTask = new TimerTask() {
             @Override
             public void run() {
-                switch (ANIM_TYPE) {
-                    case "A":
-                        handler.sendEmptyMessage(BeatHandler.A);
-                        break;
-                    case "B":
-                        handler.sendEmptyMessage(BeatHandler.B);
-                }
+               handler.sendEmptyMessage(MSG_BEAT);
             }
         };
 
         mTimer.scheduleAtFixedRate(mTimerTask, 0, MINUTE / BPM / PEAKS_PER_BEAT);
     }
 
-    private void pulseCircle(View circle, float startScale, float endScale, long dur, boolean doScaleDown) {
-        AnimationSet set = new AnimationSet(true);
-
-        ScaleAnimation scaleUp = new ScaleAnimation(
-                startScale, endScale,
-                startScale, endScale,
-                Animation.RELATIVE_TO_SELF, 0.5f,
-                Animation.RELATIVE_TO_SELF, 0.5f
-        );
-        if(doScaleDown) {
-            scaleUp.setDuration((long)(dur*0.75));
-        } else {
-            scaleUp.setDuration(dur);
-        }
-        set.addAnimation(scaleUp);
-
-        if(doScaleDown) {
-            ScaleAnimation scaleDown = new ScaleAnimation(
-                    endScale, startScale,
-                    endScale, startScale,
-                    Animation.RELATIVE_TO_SELF, 0.5f,
-                    Animation.RELATIVE_TO_SELF, 0.5f
-            );
-            scaleDown.setDuration((long)(dur*0.25));
-            scaleDown.setStartOffset((long)(dur*0.75));
-            set.addAnimation(scaleDown);
-        }
-
-        set.setFillBefore(true);
-        set.setFillEnabled(true);
-        set.setFillAfter(true);
-        set.setInterpolator(new AccelerateDecelerateInterpolator());
-
-        circle.setVisibility(View.VISIBLE);
-        circle.startAnimation(set);
-    }
-
-    private void expandCircle(int which) {
+    private void animateBeat(int which) {
         // create view
         View view = new View(this);
         view.setLayoutParams(new RelativeLayout.LayoutParams(
@@ -192,45 +127,21 @@ public class MainActivity extends Activity {
 
         // animate
         if(which == 3) {
-            // R | fixed inner-radius
-            PropertyValuesHolder holder1 = PropertyValuesHolder.ofFloat(RingDrawable.PROP_STROKE_WIDTH, 1f, 480f);
-            ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(rd, holder1);
-            animator.setDuration(1000);
-            animator.start();
+            // R | fixed inner-radius + variable stroke
+            rd.animateStroke(480f, 1000);
         } else {
-            // fixed outer-radius
+            // variable inner-radius + fixed stroke
         }
     }
 
     public class BeatHandler extends Handler
     {
-        public static final int A = 0;
-        public static final int B = 1;
-        private static final long dur = 500;
-
         @Override
         public void handleMessage(Message msg) {
-            switch(msg.what) {
-                case A:
-                    float endScale = PEAKS[mBeatCount]/MAX_PEAK;
-                    boolean doScaleDown = false;
-                    if(mBeatCount == 2) {
-                        doScaleDown = true;
-                    }
-                    pulseCircle(findViewById(mCircleIds.get(mBeatCount)),
-                            0, endScale, dur, doScaleDown);
-                    mBeatCount ++;
-                    if(mBeatCount == PEAKS_PER_BEAT) {
-                        mBeatCount = 0;
-                    }
-                    break;
-                case B:
-                    expandCircle(mBeatCount);
-                    mBeatCount ++;
-                    if(mBeatCount == PEAKS_PER_BEAT) {
-                        mBeatCount = 0;
-                    }
-                    break;
+            animateBeat(mBeatCount);
+            mBeatCount ++;
+            if(mBeatCount == PEAKS_PER_BEAT) {
+                mBeatCount = 0;
             }
         }
     }
