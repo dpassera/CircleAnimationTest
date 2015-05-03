@@ -5,10 +5,12 @@ import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.Shape;
-import android.util.Log;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
@@ -16,11 +18,11 @@ import java.util.ArrayList;
 /**
  * Created by dantepassera on 5/1/15.
  */
-public class RingDrawable extends ShapeDrawable {
+public class AnimatedRing extends ShapeDrawable {
 
     public static final String PROP_STROKE_WIDTH = "stroke";
 
-    private static final String LOG_TAG = "RingDrawable";
+    private static final String LOG_TAG = "AnimatedRing";
 
     private static final float DEFAULT_INITIAL_IRAD = 180f;
     private static final float DEFAULT_INITIAL_STROKE_WIDTH = 0f;
@@ -31,18 +33,19 @@ public class RingDrawable extends ShapeDrawable {
     private int mId;
     private ArrayList<View> mRViewArr = new ArrayList<View>();
 
-    public RingDrawable(int id, int color, ArrayList<View> rViewArr) {
+    public AnimatedRing(int id, int color, ArrayList<View> rViewArr) {
         this(id, DEFAULT_IS_FIXED_IRAD, DEFAULT_INITIAL_IRAD, DEFAULT_INITIAL_STROKE_WIDTH, color, rViewArr);
     }
 
-    public RingDrawable(int id, boolean fixedIRad, float iRad, float strokeW, int color, ArrayList<View> rViewArr) {
+    public AnimatedRing(int id, boolean fixedIRad, float iRad, float strokeW, int color, ArrayList<View> rViewArr) {
         mId = id;
         mIRad = iRad;
         mRViewArr = rViewArr;
 
         setShape(getRing(fixedIRad, strokeW));
         getPaint().setStyle(Paint.Style.STROKE);
-        getPaint().setColor(color);
+//        getPaint().setColor(color);
+        getPaint().setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SCREEN));
     }
 
     public void animateStroke(float width, long dur) {
@@ -51,6 +54,12 @@ public class RingDrawable extends ShapeDrawable {
         animator.setDuration(dur);
         animator.addListener(mAnimatorListener);
         animator.start();
+
+        AlphaAnimation aAnim = new AlphaAnimation(1f, 0f);
+        aAnim.setDuration((long)(dur*0.25));
+        aAnim.setFillAfter(true);
+        aAnim.setStartOffset((long)(dur*0.75));
+        ((View)(mRViewArr.get(mId))).startAnimation(aAnim);
     }
 
     public void animateRadius(float radius, long dur) {

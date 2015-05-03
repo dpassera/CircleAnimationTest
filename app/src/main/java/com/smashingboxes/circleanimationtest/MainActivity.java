@@ -1,6 +1,7 @@
 package com.smashingboxes.circleanimationtest;
 
 import android.app.Activity;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,7 +12,7 @@ import android.view.animation.AlphaAnimation;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.smashingboxes.circleanimationtest.drawable.RingDrawable;
+import com.smashingboxes.circleanimationtest.drawable.AnimatedRing;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -70,10 +71,7 @@ public class MainActivity extends Activity {
 
     private void initCirclesContainer() {
         mCirclesContainer = (RelativeLayout) findViewById(R.id.expand_circles_container);
-        AlphaAnimation aAnim = new AlphaAnimation(1f, 0.3f);
-        aAnim.setDuration(100);
-        aAnim.setFillAfter(true);
-        aAnim.start();
+        mCirclesContainer.setAlpha(0.3f);
     }
 
     private void initText() {
@@ -99,7 +97,7 @@ public class MainActivity extends Activity {
     }
 
     private void animateBeat(int which) {
-        Log.d(LOG_TAG, "# animatBeat : "+mRViewArr.size());
+//        Log.d(LOG_TAG, "# animatBeat : "+mRViewArr.size());
         // create view
         //* temp throttle
         if(which == 3) {
@@ -113,7 +111,7 @@ public class MainActivity extends Activity {
             mRViewArr.add(view);
 
             // add drawable to view background
-            int color = getResources().getColor(R.color.red50);
+            int color = getResources().getColor(R.color.white);
             switch (which) {
                 case 3:
                     if (mRWhich == 1) {
@@ -125,9 +123,10 @@ public class MainActivity extends Activity {
                     }
                     break;
             }
-            view.setBackground(new RingDrawable(mRViewArr.size() - 1, color, mRViewArr));
+            view.setBackground(new AnimatedRing(mRViewArr.size() - 1, color, mRViewArr));
 
-            RingDrawable rd = (RingDrawable) view.getBackground();
+            AnimatedRing rd = (AnimatedRing) view.getBackground();
+//            rd.setColorFilter(color, PorterDuff.Mode.MULTIPLY);
             rd.setStroke(0f);
 
             // animate
