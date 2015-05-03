@@ -1,4 +1,5 @@
 Next
+- Add palette to /colors
 - Animate drawable
 - Remove view on animation complete
 

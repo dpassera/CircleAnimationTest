@@ -13,11 +13,13 @@ import com.smashingboxes.circleanimationtest.R;
  */
 public class RingDrawable extends ShapeDrawable {
 
-    private static final String PROP_ARC_WIDTH = "stroke";
+    private static final String PROP_STROKE_WIDTH = "stroke";
 
-    private static final float DEFAULT_INITIAL_IRAD = 100f;
+    private static final float DEFAULT_INITIAL_IRAD = 180f;
     private static final float DEFAULT_INITIAL_STROKE_WIDTH = 0f;
     private static final boolean DEFAULT_IS_FIXED_IRAD = true;
+
+    private float mIRad;
 
 //    private Context mContext;
 
@@ -27,24 +29,26 @@ public class RingDrawable extends ShapeDrawable {
 
     public RingDrawable(Context context, boolean fixedIRad, float iRad, float strokeW) {
 //        mContext = context;
+        mIRad = iRad;
 
-        setShape(getRing(fixedIRad, iRad, strokeW));
+        setShape(getRing(fixedIRad, strokeW));
         getPaint().setStyle(Paint.Style.STROKE);
         getPaint().setColor(context.getResources().getColor(R.color.red50));
     }
 
-    private Shape getRing(boolean fixedIRad, final float iRad, final float strokeW) {
+    private Shape getRing(boolean fixedIRad, final float strokeW) {
         return new Shape() {
 
             @Override
             public void draw(Canvas canvas, Paint paint) {
-               canvas.drawCircle(canvas.getWidth()/2, canvas.getHeight()/2, iRad, paint);
+               canvas.drawCircle(canvas.getWidth()/2, canvas.getHeight()/2, mIRad, paint);
             }
         };
     }
 
     public void setStrokeWidth(float strokeW) {
         getPaint().setStrokeWidth(strokeW);
+        mIRad += strokeW/2;
         invalidateSelf();
     }
 
