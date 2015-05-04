@@ -1,6 +1,6 @@
 Next
-- Need to figure out way to get effect without color dodge (or how to color dodge blend)
-- Fade R to 0 starting at 80% scale
+- Figure out the available blend modes and request redesign (if necessary) utilizing one
+- Display static ring of 10? width in center. R ring should never completely disappear
 
 Don't forget
 - Compile for 5.0 and use Z-level for rings and other select UI elements

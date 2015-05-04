@@ -44,8 +44,8 @@ public class AnimatedRing extends ShapeDrawable {
 
         setShape(getRing(fixedIRad, strokeW));
         getPaint().setStyle(Paint.Style.STROKE);
-//        getPaint().setColor(color);
-        getPaint().setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SCREEN));
+        getPaint().setColor(color);
+//        getPaint().setXfermode(new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
     }
 
     public void animateStroke(float width, long dur) {

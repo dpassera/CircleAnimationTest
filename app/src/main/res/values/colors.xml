@@ -8,8 +8,11 @@
     <item name="bkgd" type="color">#e86631</item>
     <item name="t_value" type="color">#ffffff</item>
     <item name="t_label" type="color">#ffffff</item>
-    <item name="r_1" type="color">#656565</item>
-    <item name="r_2" type="color">#656565</item>
-
+    <item name="r_1" type="color">#4dffffff</item>
+    <item name="r_2" type="color">#4dffffff</item>
+    <item name="p" type="color">#4dffffff</item>
+    <item name="q" type="color">#4dffffff</item>
+    <item name="s" type="color">#4dffffff</item>
+    <item name="t" type="color">#4dffffff</item>
 
 </resources>

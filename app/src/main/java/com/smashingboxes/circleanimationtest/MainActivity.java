@@ -71,15 +71,17 @@ public class MainActivity extends Activity {
 
     private void initCirclesContainer() {
         mCirclesContainer = (RelativeLayout) findViewById(R.id.expand_circles_container);
-        mCirclesContainer.setAlpha(0.3f);
+//        mCirclesContainer.setAlpha(0.3f);
     }
 
     private void initText() {
         CircleTestApplication app = (CircleTestApplication) getApplication();
         final Typeface tfRobotoBk = app.getCustomTypeface(app.TF_ROBOTO_BK);
         TextView tBPM = (TextView) findViewById(R.id.t_bpm);
+        TextView tRR = (TextView) findViewById(R.id.t_rr);
 
         tBPM.setTypeface(tfRobotoBk);
+        tRR.setTypeface(tfRobotoBk);
     }
 
     private void startLoop() {
@@ -113,7 +115,14 @@ public class MainActivity extends Activity {
             // add drawable to view background
             int color = getResources().getColor(R.color.white);
             switch (which) {
+                case 1:
+                    // p
+                    break;
+                case 2:
+                    // q
+                    break;
                 case 3:
+                    // r
                     if (mRWhich == 1) {
                         color = getResources().getColor(R.color.r_1);
                         mRWhich = 2;
@@ -121,6 +130,12 @@ public class MainActivity extends Activity {
                         color = getResources().getColor(R.color.r_2);
                         mRWhich = 1;
                     }
+                    break;
+                case 4:
+                    // s
+                    break;
+                case 5:
+                    // t
                     break;
             }
             view.setBackground(new AnimatedRing(mRViewArr.size() - 1, color, mRViewArr));
@@ -132,7 +147,7 @@ public class MainActivity extends Activity {
             // animate
             if(which == 3) {
                 // R | fixed inner-radius + variable stroke
-                rd.animateStroke(480f, 1000);
+                rd.animateStroke(480f, 2000);
             } else {
                 // variable inner-radius + fixed stroke
             }

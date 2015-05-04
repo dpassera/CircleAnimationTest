@@ -24,9 +24,10 @@
 
     </RelativeLayout>
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="fill_parent"
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -37,13 +38,25 @@
             android:id="@+id/t_bpm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="888"
+            android:text="125"
             android:textColor="@color/t_value"
-            android:layout_gravity="center_horizontal|bottom"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
             android:layout_marginBottom="80dp"
-            android:textSize="260dp" />
+            android:textSize="260dp"/>
 
-    </FrameLayout>
+        <TextView
+            android:id="@+id/t_rr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="8.8"
+            android:textColor="@color/t_value"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="256dp"
+            android:textSize="109dp"
+            android:layout_alignParentEnd="false" />
+
+    </RelativeLayout>
 
 </RelativeLayout>
